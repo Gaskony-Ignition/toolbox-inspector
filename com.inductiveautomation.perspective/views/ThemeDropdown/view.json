@@ -1,0 +1,101 @@
+{
+  "custom": {},
+  "params": {
+    "refresh": 0
+  },
+  "propConfig": {
+    "params.refresh": {
+      "paramDirection": "input",
+      "persistent": true
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "height": 34,
+      "width": 260
+    }
+  },
+  "root": {
+    "children": [
+      {
+        "meta": {
+          "name": "caption"
+        },
+        "position": {
+          "basis": "auto",
+          "grow": 0,
+          "shrink": 0
+        },
+        "props": {
+          "style": {
+            "color": "var(--label)",
+            "fontSize": "13px",
+            "fontWeight": "600",
+            "lineHeight": 1.4,
+            "whiteSpace": "nowrap"
+          },
+          "text": "Theme"
+        },
+        "type": "ia.display.label"
+      },
+      {
+        "meta": {
+          "name": "Theme"
+        },
+        "position": {
+          "basis": "0px",
+          "grow": 1,
+          "shrink": 1
+        },
+        "propConfig": {
+          "props.options": {
+            "binding": {
+              "config": {
+                "expression": "toStr({view.params.refresh}) + '|' + toStr(now(30000))"
+              },
+              "transforms": [
+                {
+                  "code": "\t# WHY THIS EXPRESSION: an options binding evaluates when its expression\n\t# CHANGES, and this one used to be the constant 1 -- so the theme list\n\t# was read once when the view mounted and never again. Make a theme and\n\t# it was absent from the menu, which reads as the theme not having been\n\t# made. Two halves, because this view gets copied into projects we do\n\t# not control: `refresh` re-reads the instant an embedder bumps it, and\n\t# now(30000) is the floor for a copy that passes nothing.\n\t#\n\t# The param only works because params.refresh carries\n\t# paramDirection input in this view's own propConfig. Without it an\n\t# embedder's value is silently discarded and the default renders --\n\t# measured here as a param stuck at 0 through a create AND a delete,\n\t# with no error in the console and none on the gateway.\n\t# Deliberately self-contained: this view is a copy-me artefact, so it\n\t# must not depend on a script package existing in the host project.\n\t# The list is read from the GATEWAY, not written here, so a theme pack\n\t# installed after this view was copied appears without editing it, and\n\t# a theme that is not installed can never be picked.\n\tfrom java.lang import Throwable as JThrowable\n\t# light and dark live inside the Perspective module's own jar and never\n\t# appear as config resources, so the stock six are a fixed base rather\n\t# than something read from the gateway. Order is Ignition's own.\n\tstock = [u\"light\", u\"light-warm\", u\"light-cool\",\n\t\t\tu\"dark\", u\"dark-warm\", u\"dark-cool\"]\n\textra = []\n\ttry:\n\t\tfor res in system.config.getResources(\n\t\t\t\tmoduleId=\"com.inductiveautomation.perspective\", typeId=\"themes\"):\n\t\t\tname = unicode(res.getName())\n\t\t\tif name not in stock and name not in extra:\n\t\t\t\textra.append(name)\n\texcept (JThrowable, Exception) as e:\n\t\t# a dropdown offering the stock six beats one offering nothing\n\t\tsystem.util.getLogger(\"ThemeSelector\").warn(\n\t\t\tu\"theme listing failed, offering the stock themes only: %s\" % e)\n\treturn [{u\"value\": n, u\"label\": n.replace(u\"-\", u\" \").capitalize()}\n\t\t\tfor n in stock + sorted(extra)]\n",
+                  "type": "script"
+                }
+              ],
+              "type": "expr"
+            }
+          },
+          "props.value": {
+            "binding": {
+              "config": {
+                "bidirectional": true,
+                "path": "session.props.theme"
+              },
+              "type": "property"
+            }
+          }
+        },
+        "props": {
+          "allowClearing": false,
+          "options": [],
+          "placeholder": "Theme",
+          "showSearch": false,
+          "style": {
+            "height": "34px"
+          }
+        },
+        "type": "ia.input.dropdown"
+      }
+    ],
+    "meta": {
+      "name": "root"
+    },
+    "props": {
+      "alignItems": "center",
+      "direction": "row",
+      "style": {
+        "gap": "10px",
+        "height": "100%",
+        "width": "100%"
+      }
+    },
+    "type": "ia.container.flex"
+  }
+}

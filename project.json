@@ -1,0 +1,7 @@
+{
+  "title": "Toolbox Inspector (dev)",
+  "description": "Explains any project on its gateway page by page - API calls, named queries, SQL, scripts, navigation, popups, messages, embedded views and tags - and checks it for broken references, gateway scripts that run with no page open, and security and performance risks. Every page exports as Markdown. · (dev)",
+  "enabled": true,
+  "inheritable": false,
+  "parent": ""
+}

@@ -1,0 +1,17 @@
+{
+  "pages": {
+    "/": {
+      "title": "Toolbox Inspector",
+      "viewPath": "Inspector"
+    },
+    "/:project": {
+      "title": "Toolbox Inspector",
+      "viewPath": "Inspector"
+    },
+    "/:project/:item": {
+      "title": "Toolbox Inspector",
+      "viewPath": "Inspector"
+    }
+  },
+  "sharedDocks": {}
+}

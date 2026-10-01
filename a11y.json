@@ -1,0 +1,10 @@
+{
+  "gateway": "module-testing",
+  "projects": [
+    {
+      "name": "Toolbox_Inspector",
+      "pageConfig": "com.inductiveautomation.perspective/page-config/config.json"
+    }
+  ],
+  "exceptions": []
+}

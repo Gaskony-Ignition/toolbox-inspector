@@ -1,0 +1,2392 @@
+{
+  "custom": {
+    "project": "",
+    "key": "",
+    "follow": true,
+    "search": "",
+    "mode": "findings",
+    "show": {
+      "issue": true,
+      "risk": true,
+      "api": true,
+      "nq": true,
+      "sql": true,
+      "script": true,
+      "block": true,
+      "nav": true,
+      "popup": true,
+      "msg": true,
+      "embed": true,
+      "tag": true,
+      "change": true
+    },
+    "detail": {
+      "title": "",
+      "views": [],
+      "counts": {
+        "issue": 0,
+        "risk": 0,
+        "api": 0,
+        "nq": 0,
+        "sql": 0,
+        "script": 0,
+        "block": 0,
+        "nav": 0,
+        "popup": 0,
+        "msg": 0,
+        "embed": 0,
+        "tag": 0,
+        "change": 0
+      },
+      "rows": [],
+      "total": 0
+    },
+    "tree": [],
+    "selected": {},
+    "script": "",
+    "text": "",
+    "leftPos": 300,
+    "leftLast": 300,
+    "detailSide": "below",
+    "detailPos": "62%",
+    "history": [],
+    "linkKey": "",
+    "triage": []
+  },
+  "params": {
+    "project": "",
+    "item": ""
+  },
+  "propConfig": {
+    "custom.project": {
+      "persistent": true,
+      "onChange": {
+        "enabled": null,
+        "script": "\tif previousValue is not None and currentValue.value != previousValue.value:\n\t\tproject = currentValue.value\n\t\tself.custom.key = '' if project in ('', '*') else (self.custom.linkKey or 'report:overview')\n\t\tself.custom.linkKey = ''\n\t\tself.custom.selected = {}\n\t\tself.custom.history = []"
+      }
+    },
+    "custom.key": {
+      "persistent": true
+    },
+    "custom.follow": {
+      "persistent": true
+    },
+    "custom.search": {
+      "persistent": true
+    },
+    "custom.mode": {
+      "persistent": true
+    },
+    "custom.show": {
+      "persistent": true
+    },
+    "custom.detail": {
+      "binding": {
+        "type": "expr-struct",
+        "config": {
+          "struct": {
+            "project": "{view.custom.project}",
+            "key": "{view.custom.key}",
+            "follow": "{view.custom.follow}",
+            "search": "{view.custom.search}",
+            "show": "{view.custom.show}"
+          },
+          "waitOnAll": true
+        },
+        "transforms": [
+          {
+            "type": "script",
+            "code": "\treturn inspector.source.detail(value.project, value.key, value.follow, [k for k in value.show if value.show[k]], value.search)"
+          }
+        ]
+      },
+      "persistent": true
+    },
+    "custom.tree": {
+      "binding": {
+        "type": "property",
+        "config": {
+          "path": "view.custom.project"
+        },
+        "transforms": [
+          {
+            "type": "script",
+            "code": "\treturn inspector.source.tree(value)"
+          }
+        ]
+      },
+      "persistent": true
+    },
+    "custom.selected": {
+      "persistent": true
+    },
+    "custom.script": {
+      "binding": {
+        "type": "expr-struct",
+        "config": {
+          "struct": {
+            "project": "{view.custom.project}",
+            "source": "{view.custom.selected.source}",
+            "bi": "{view.custom.selected.bi}"
+          },
+          "waitOnAll": true
+        },
+        "transforms": [
+          {
+            "type": "script",
+            "code": "\tcode = inspector.source.script(value.project, value.source, value.bi)\n\tif not code:\n\t\tif value.source:\n\t\t\treturn '_No script behind this finding - it is declared in the view (a binding, an action, an embed or a setting)._'\n\t\treturn '_Select a row to see the script it was found in._'\n\treturn '```python\\n' + code.replace('\\t', '    ') + '\\n```'"
+          }
+        ]
+      },
+      "persistent": true
+    },
+    "custom.text": {
+      "binding": {
+        "type": "expr-struct",
+        "config": {
+          "struct": {
+            "project": "{view.custom.project}",
+            "key": "{view.custom.key}",
+            "follow": "{view.custom.follow}",
+            "show": "{view.custom.show}",
+            "mode": "{view.custom.mode}"
+          },
+          "waitOnAll": true
+        },
+        "transforms": [
+          {
+            "type": "script",
+            "code": "\tif not value.project:\n\t\treturn '## Pick a project\\n\\nChoose a project on this gateway from the list at the top. The Inspector reads it live: pages, scripts, named queries and the gateway scripts that run with no page open.'\n\tif value.mode == 'markdown' or value.key == 'report:overview':\n\t\treturn inspector.source.markdown(value.project, value.key, value.follow, [k for k in value.show if value.show[k]])\n\treturn ''"
+          }
+        ]
+      },
+      "persistent": true
+    },
+    "custom.leftPos": {
+      "persistent": true
+    },
+    "custom.leftLast": {
+      "persistent": true
+    },
+    "custom.detailSide": {
+      "persistent": true
+    },
+    "custom.detailPos": {
+      "persistent": true
+    },
+    "custom.history": {
+      "persistent": true
+    },
+    "custom.linkKey": {
+      "persistent": true
+    },
+    "custom.triage": {
+      "binding": {
+        "type": "property",
+        "config": {
+          "path": "view.custom.project"
+        },
+        "transforms": [
+          {
+            "type": "script",
+            "code": "\treturn inspector.source.triage() if value == '*' else []"
+          }
+        ]
+      },
+      "persistent": true
+    },
+    "params.project": {
+      "paramDirection": "input",
+      "persistent": true
+    },
+    "params.item": {
+      "paramDirection": "input",
+      "persistent": true
+    }
+  },
+  "events": {
+    "system": {
+      "onStartup": {
+        "config": {
+          "script": "\t# A shared link: /<project>/<item>, both URL-decoded by the router.\n\tif self.params.project:\n\t\tself.custom.linkKey = self.params.item or ''\n\t\tif self.custom.project == self.params.project:\n\t\t\tself.custom.key = self.params.item or 'report:overview'\n\t\t\tself.custom.linkKey = ''\n\t\telse:\n\t\t\tself.custom.project = self.params.project"
+        },
+        "scope": "G",
+        "type": "script"
+      }
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "height": 640,
+      "width": 1366
+    }
+  },
+  "root": {
+    "type": "ia.container.flex",
+    "meta": {
+      "name": "root"
+    },
+    "position": {},
+    "props": {
+      "direction": "column",
+      "style": {
+        "classes": "itm-page"
+      }
+    },
+    "children": [
+      {
+        "type": "ia.container.flex",
+        "meta": {
+          "name": "Header"
+        },
+        "position": {
+          "shrink": 0,
+          "basis": "48px"
+        },
+        "props": {
+          "direction": "row",
+          "alignItems": "center",
+          "style": {
+            "classes": "itm-header"
+          }
+        },
+        "children": [
+          {
+            "type": "ia.input.button",
+            "meta": {
+              "name": "PagesToggle",
+              "tooltip": {
+                "enabled": true,
+                "text": "Show or hide the page list"
+              }
+            },
+            "position": {
+              "shrink": 0
+            },
+            "props": {
+              "text": "Pages",
+              "style": {
+                "classes": "itm-btn"
+              }
+            },
+            "events": {
+              "component": {
+                "onActionPerformed": {
+                  "config": {
+                    "script": "\tpos = self.view.custom.leftPos\n\ttry:\n\t\twidth = float(str(pos).replace('px', ''))\n\texcept ValueError:\n\t\twidth = 300\n\tif width > 24:\n\t\tself.view.custom.leftLast = pos\n\t\tself.view.custom.leftPos = 0\n\telse:\n\t\tself.view.custom.leftPos = self.view.custom.leftLast or 300"
+                  },
+                  "scope": "G",
+                  "type": "script"
+                }
+              }
+            }
+          },
+          {
+            "type": "ia.display.label",
+            "meta": {
+              "name": "Title"
+            },
+            "position": {
+              "shrink": 0
+            },
+            "props": {
+              "text": "Toolbox Inspector",
+              "style": {
+                "classes": "itm-title"
+              }
+            }
+          },
+          {
+            "type": "ia.input.dropdown",
+            "meta": {
+              "name": "Project"
+            },
+            "position": {
+              "shrink": 0,
+              "basis": "260px"
+            },
+            "props": {
+              "value": "",
+              "options": [],
+              "showClearIcon": false,
+              "search": {
+                "enabled": true
+              },
+              "placeholder": {
+                "text": "Choose a project..."
+              },
+              "style": {
+                "classes": "itm-input"
+              }
+            },
+            "propConfig": {
+              "props.options": {
+                "binding": {
+                  "type": "expr",
+                  "config": {
+                    "expression": "runScript('inspector.source.projects', 0)"
+                  }
+                }
+              },
+              "props.value": {
+                "binding": {
+                  "type": "property",
+                  "config": {
+                    "path": "view.custom.project",
+                    "bidirectional": true
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "ia.input.button",
+            "meta": {
+              "name": "Rescan"
+            },
+            "position": {
+              "shrink": 0
+            },
+            "props": {
+              "text": "Rescan",
+              "style": {
+                "classes": "itm-btn"
+              }
+            },
+            "events": {
+              "component": {
+                "onActionPerformed": {
+                  "config": {
+                    "script": "\tself.getSibling('Project').refreshBinding('props.options')\n\tinspector.source.rescan(self.view.custom.project)\n\tself.view.refreshBinding('custom.triage')\n\tself.view.refreshBinding('custom.tree')\n\tself.view.refreshBinding('custom.detail')\n\tself.view.refreshBinding('custom.text')"
+                  },
+                  "scope": "G",
+                  "type": "script"
+                }
+              }
+            }
+          },
+          {
+            "type": "ia.input.text-field",
+            "meta": {
+              "name": "Search"
+            },
+            "position": {
+              "shrink": 1,
+              "grow": 1,
+              "basis": "160px"
+            },
+            "props": {
+              "text": "",
+              "placeholder": "Filter: view, component, target...",
+              "style": {
+                "classes": "itm-input itm-search"
+              }
+            },
+            "propConfig": {
+              "props.text": {
+                "binding": {
+                  "type": "property",
+                  "config": {
+                    "path": "view.custom.search",
+                    "bidirectional": true
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "ia.display.view",
+            "meta": {
+              "name": "Theme"
+            },
+            "position": {
+              "shrink": 0,
+              "basis": "240px"
+            },
+            "props": {
+              "path": "ThemeDropdown",
+              "useDefaultViewHeight": false,
+              "useDefaultViewWidth": false,
+              "style": {
+                "classes": "itm-theme"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "type": "ia.container.split",
+        "meta": {
+          "name": "Body"
+        },
+        "position": {
+          "grow": 1,
+          "basis": "0px"
+        },
+        "props": {
+          "orientation": "horizontal",
+          "split": {
+            "position": 300,
+            "size": 8,
+            "visible": true,
+            "draggable": true
+          },
+          "style": {
+            "classes": "itm-split itm-body"
+          }
+        },
+        "propConfig": {
+          "props.split.position": {
+            "binding": {
+              "type": "property",
+              "config": {
+                "path": "view.custom.leftPos",
+                "bidirectional": true
+              }
+            }
+          }
+        },
+        "children": [
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "Left"
+            },
+            "position": {
+              "position": "left"
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "classes": "itm-left"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.input.dropdown",
+                "meta": {
+                  "name": "FindPage"
+                },
+                "position": {
+                  "shrink": 0
+                },
+                "props": {
+                  "value": "",
+                  "options": [],
+                  "showClearIcon": false,
+                  "search": {
+                    "enabled": true
+                  },
+                  "placeholder": {
+                    "text": "Find a page or check..."
+                  },
+                  "style": {
+                    "classes": "itm-input itm-find"
+                  }
+                },
+                "propConfig": {
+                  "props.options": {
+                    "binding": {
+                      "type": "property",
+                      "config": {
+                        "path": "view.custom.project"
+                      },
+                      "transforms": [
+                        {
+                          "type": "script",
+                          "code": "\treturn inspector.source.pages(value)"
+                        }
+                      ]
+                    }
+                  },
+                  "props.value": {
+                    "binding": {
+                      "type": "property",
+                      "config": {
+                        "path": "view.custom.key",
+                        "bidirectional": true
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "ia.display.tree",
+                "meta": {
+                  "name": "Tree",
+                  "tabIndex": 0
+                },
+                "position": {
+                  "grow": 1,
+                  "basis": "0px"
+                },
+                "props": {
+                  "items": [],
+                  "style": {
+                    "classes": "itm-tree"
+                  }
+                },
+                "propConfig": {
+                  "props.items": {
+                    "binding": {
+                      "type": "property",
+                      "config": {
+                        "path": "view.custom.tree"
+                      }
+                    }
+                  }
+                },
+                "events": {
+                  "component": {
+                    "onItemClicked": {
+                      "config": {
+                        "script": "\tif event.data:\n\t\tself.view.rootContainer.go(event.data)\n\telse:\n\t\t# A folder: clicking its label opens or closes it, not only the chevron.\n\t\tnode = self.props.items[event.itemPath[0]]\n\t\tfor i in event.itemPath[1:]:\n\t\t\tnode = node['items'][i]\n\t\tnode['expanded'] = not node['expanded']"
+                      },
+                      "scope": "G",
+                      "type": "script"
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "type": "ia.container.flex",
+            "meta": {
+              "name": "Right"
+            },
+            "position": {
+              "position": "right"
+            },
+            "props": {
+              "direction": "column",
+              "style": {
+                "classes": "itm-right"
+              }
+            },
+            "children": [
+              {
+                "type": "ia.container.flex",
+                "meta": {
+                  "name": "TitleRow"
+                },
+                "position": {
+                  "shrink": 0,
+                  "basis": "40px"
+                },
+                "props": {
+                  "direction": "row",
+                  "alignItems": "center",
+                  "style": {
+                    "classes": "itm-row"
+                  }
+                },
+                "children": [
+                  {
+                    "type": "ia.input.button",
+                    "meta": {
+                      "name": "Back",
+                      "tooltip": {
+                        "enabled": true,
+                        "text": "Back to the previous page or check"
+                      }
+                    },
+                    "position": {
+                      "shrink": 0
+                    },
+                    "props": {
+                      "text": "Back",
+                      "style": {
+                        "classes": "itm-btn"
+                      }
+                    },
+                    "events": {
+                      "component": {
+                        "onActionPerformed": {
+                          "config": {
+                            "script": "\thistory = list(self.view.custom.history)\n\tif history:\n\t\tself.view.custom.key = history.pop()\n\t\tself.view.custom.history = history\n\t\tself.view.custom.selected = {}"
+                          },
+                          "scope": "G",
+                          "type": "script"
+                        }
+                      }
+                    },
+                    "propConfig": {
+                      "props.enabled": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "len({view.custom.history}) > 0"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "type": "ia.display.label",
+                    "meta": {
+                      "name": "PageTitle"
+                    },
+                    "position": {
+                      "grow": 1,
+                      "shrink": 1,
+                      "basis": "0px"
+                    },
+                    "props": {
+                      "text": "",
+                      "style": {
+                        "classes": "itm-page-title"
+                      }
+                    },
+                    "propConfig": {
+                      "props.text": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if(len({view.custom.project}) = 0, 'No project chosen', if(len({view.custom.key}) = 0, 'Pick a page or a check', coalesce({view.custom.detail.title}, '')))"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "type": "ia.display.label",
+                    "meta": {
+                      "name": "Counts"
+                    },
+                    "position": {
+                      "shrink": 0
+                    },
+                    "props": {
+                      "text": "",
+                      "style": {
+                        "classes": "itm-muted"
+                      }
+                    },
+                    "propConfig": {
+                      "props.text": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if(len({view.custom.key}) = 0 || {view.custom.key} = 'report:overview', '', if(len({view.custom.detail.views}) > 0, toStr(len({view.custom.detail.views})) + ' views, ', '') + toStr({view.custom.detail.total}) + ' findings')"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "type": "ia.container.flex",
+                    "meta": {
+                      "name": "Modes"
+                    },
+                    "position": {
+                      "shrink": 0
+                    },
+                    "props": {
+                      "direction": "row",
+                      "style": {
+                        "classes": "itm-segs"
+                      }
+                    },
+                    "children": [
+                      {
+                        "type": "ia.input.button",
+                        "meta": {
+                          "name": "Mode_findings"
+                        },
+                        "position": {
+                          "shrink": 0
+                        },
+                        "props": {
+                          "text": "Findings",
+                          "style": {
+                            "classes": "itm-btn"
+                          }
+                        },
+                        "events": {
+                          "component": {
+                            "onActionPerformed": {
+                              "config": {
+                                "script": "\tself.view.custom.mode = 'findings'"
+                              },
+                              "scope": "G",
+                              "type": "script"
+                            }
+                          }
+                        },
+                        "propConfig": {
+                          "props.style.classes": {
+                            "binding": {
+                              "type": "expr",
+                              "config": {
+                                "expression": "if({view.custom.mode} = 'findings', 'itm-seg itm-seg--on', 'itm-seg')"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "type": "ia.input.button",
+                        "meta": {
+                          "name": "Mode_markdown"
+                        },
+                        "position": {
+                          "shrink": 0
+                        },
+                        "props": {
+                          "text": "Markdown",
+                          "style": {
+                            "classes": "itm-btn"
+                          }
+                        },
+                        "events": {
+                          "component": {
+                            "onActionPerformed": {
+                              "config": {
+                                "script": "\tself.view.custom.mode = 'markdown'"
+                              },
+                              "scope": "G",
+                              "type": "script"
+                            }
+                          }
+                        },
+                        "propConfig": {
+                          "props.style.classes": {
+                            "binding": {
+                              "type": "expr",
+                              "config": {
+                                "expression": "if({view.custom.mode} = 'markdown', 'itm-seg itm-seg--on', 'itm-seg')"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "ia.input.button",
+                    "meta": {
+                      "name": "UsedBy",
+                      "tooltip": {
+                        "enabled": true,
+                        "text": "Everything that embeds, opens or routes to this view"
+                      }
+                    },
+                    "position": {
+                      "shrink": 0
+                    },
+                    "props": {
+                      "text": "Used by",
+                      "style": {
+                        "classes": "itm-btn"
+                      }
+                    },
+                    "events": {
+                      "component": {
+                        "onActionPerformed": {
+                          "config": {
+                            "script": "\tself.view.rootContainer.go('use:view:' + self.view.custom.key[5:])"
+                          },
+                          "scope": "G",
+                          "type": "script"
+                        }
+                      }
+                    },
+                    "propConfig": {
+                      "position.display": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "left({view.custom.key}, 5) = 'view:' && indexOf('@#%(', substring({view.custom.key}, 5, 6)) < 0"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "type": "ia.input.button",
+                    "meta": {
+                      "name": "OpenPage",
+                      "tooltip": {
+                        "enabled": true,
+                        "text": "Open this page in the project, in a new tab"
+                      }
+                    },
+                    "position": {
+                      "shrink": 0
+                    },
+                    "props": {
+                      "text": "Open page",
+                      "style": {
+                        "classes": "itm-btn"
+                      }
+                    },
+                    "events": {
+                      "component": {
+                        "onActionPerformed": {
+                          "config": {
+                            "script": "\turl = '%s/data/perspective/client/%s%s' % (self.session.props.gateway.address, self.view.custom.project, self.view.custom.key[6:])\n\tsystem.perspective.navigate(url=url, newTab=True)"
+                          },
+                          "scope": "G",
+                          "type": "script"
+                        }
+                      }
+                    },
+                    "propConfig": {
+                      "position.display": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "left({view.custom.key}, 6) = 'route:' && indexOf({view.custom.key}, '/:') < 0"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "type": "ia.input.button",
+                    "meta": {
+                      "name": "Link",
+                      "tooltip": {
+                        "enabled": true,
+                        "text": "A link that opens the Inspector on this project and page"
+                      }
+                    },
+                    "position": {
+                      "shrink": 0
+                    },
+                    "props": {
+                      "text": "Link",
+                      "style": {
+                        "classes": "itm-btn"
+                      }
+                    },
+                    "events": {
+                      "component": {
+                        "onActionPerformed": {
+                          "config": {
+                            "script": "\timport urllib\n\turl = '%s/data/perspective/client/%s/%s' % (self.session.props.gateway.address, system.project.getProjectName(), urllib.quote(self.view.custom.project, ''))\n\tif self.view.custom.key and self.view.custom.key != 'report:overview':\n\t\turl += '/' + urllib.quote(self.view.custom.key, '')\n\tsystem.perspective.openPopup('itm-link', 'LinkPopup', params={'url': url}, title='Link to this page', modal=True, showCloseIcon=True,\n\t\tdraggable=False, resizable=False, viewportBound=True)"
+                          },
+                          "scope": "G",
+                          "type": "script"
+                        }
+                      }
+                    },
+                    "propConfig": {
+                      "props.enabled": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "len({view.custom.project}) > 0"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "type": "ia.input.button",
+                    "meta": {
+                      "name": "Download"
+                    },
+                    "position": {
+                      "shrink": 0
+                    },
+                    "props": {
+                      "text": "Download .md",
+                      "style": {
+                        "classes": "itm-btn"
+                      }
+                    },
+                    "events": {
+                      "component": {
+                        "onActionPerformed": {
+                          "config": {
+                            "script": "\tkey = self.view.custom.key\n\tif key:\n\t\tcats = [k for k in self.view.custom.show if self.view.custom.show[k]]\n\t\tmd = inspector.source.markdown(self.view.custom.project, key, self.view.custom.follow, cats)\n\t\tname = (self.view.custom.project + '-' + (key.partition(':')[2].strip('/').replace('/', '-').replace('@', '') or 'home'))\n\t\tsystem.perspective.download(name + '.md', md, 'text/markdown')"
+                          },
+                          "scope": "G",
+                          "type": "script"
+                        }
+                      }
+                    },
+                    "propConfig": {
+                      "props.enabled": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "len({view.custom.key}) > 0"
+                          }
+                        }
+                      }
+                    }
+                  }
+                ],
+                "propConfig": {
+                  "position.display": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "{view.custom.project} != '*'"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "ia.container.flex",
+                "meta": {
+                  "name": "Chips"
+                },
+                "position": {
+                  "shrink": 0
+                },
+                "props": {
+                  "direction": "row",
+                  "wrap": "wrap",
+                  "alignItems": "center",
+                  "style": {
+                    "classes": "itm-chips"
+                  }
+                },
+                "children": [
+                  {
+                    "type": "ia.input.toggle-switch",
+                    "meta": {
+                      "name": "Follow"
+                    },
+                    "position": {
+                      "shrink": 0
+                    },
+                    "props": {
+                      "selected": true,
+                      "label": {
+                        "text": "Include embeds and popups",
+                        "position": "right"
+                      },
+                      "style": {
+                        "classes": "itm-toggle"
+                      }
+                    },
+                    "propConfig": {
+                      "props.selected": {
+                        "binding": {
+                          "type": "property",
+                          "config": {
+                            "path": "view.custom.follow",
+                            "bidirectional": true
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "type": "ia.input.button",
+                    "meta": {
+                      "name": "Chip_issue"
+                    },
+                    "position": {
+                      "shrink": 0
+                    },
+                    "props": {
+                      "text": "Broken references",
+                      "style": {
+                        "classes": "itm-btn"
+                      }
+                    },
+                    "events": {
+                      "component": {
+                        "onActionPerformed": {
+                          "config": {
+                            "script": "\tself.view.custom.show['issue'] = not self.view.custom.show['issue']"
+                          },
+                          "scope": "G",
+                          "type": "script"
+                        }
+                      }
+                    },
+                    "propConfig": {
+                      "props.text": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "'Broken references ' + toStr(coalesce({view.custom.detail.counts.issue}, 0))"
+                          }
+                        }
+                      },
+                      "props.style.classes": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if({view.custom.show.issue}, 'itm-chip itm-chip--on', 'itm-chip') + ' itm-chip--alert'"
+                          }
+                        }
+                      },
+                      "position.display": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "coalesce({view.custom.detail.counts.issue}, 0) > 0"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "type": "ia.input.button",
+                    "meta": {
+                      "name": "Chip_risk"
+                    },
+                    "position": {
+                      "shrink": 0
+                    },
+                    "props": {
+                      "text": "Security & risk",
+                      "style": {
+                        "classes": "itm-btn"
+                      }
+                    },
+                    "events": {
+                      "component": {
+                        "onActionPerformed": {
+                          "config": {
+                            "script": "\tself.view.custom.show['risk'] = not self.view.custom.show['risk']"
+                          },
+                          "scope": "G",
+                          "type": "script"
+                        }
+                      }
+                    },
+                    "propConfig": {
+                      "props.text": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "'Security & risk ' + toStr(coalesce({view.custom.detail.counts.risk}, 0))"
+                          }
+                        }
+                      },
+                      "props.style.classes": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if({view.custom.show.risk}, 'itm-chip itm-chip--on', 'itm-chip') + ' itm-chip--alert'"
+                          }
+                        }
+                      },
+                      "position.display": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "coalesce({view.custom.detail.counts.risk}, 0) > 0"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "type": "ia.input.button",
+                    "meta": {
+                      "name": "Chip_api"
+                    },
+                    "position": {
+                      "shrink": 0
+                    },
+                    "props": {
+                      "text": "API calls",
+                      "style": {
+                        "classes": "itm-btn"
+                      }
+                    },
+                    "events": {
+                      "component": {
+                        "onActionPerformed": {
+                          "config": {
+                            "script": "\tself.view.custom.show['api'] = not self.view.custom.show['api']"
+                          },
+                          "scope": "G",
+                          "type": "script"
+                        }
+                      }
+                    },
+                    "propConfig": {
+                      "props.text": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "'API calls ' + toStr(coalesce({view.custom.detail.counts.api}, 0))"
+                          }
+                        }
+                      },
+                      "props.style.classes": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if({view.custom.show.api}, 'itm-chip itm-chip--on', 'itm-chip')"
+                          }
+                        }
+                      },
+                      "position.display": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "coalesce({view.custom.detail.counts.api}, 0) > 0"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "type": "ia.input.button",
+                    "meta": {
+                      "name": "Chip_nq"
+                    },
+                    "position": {
+                      "shrink": 0
+                    },
+                    "props": {
+                      "text": "Named queries",
+                      "style": {
+                        "classes": "itm-btn"
+                      }
+                    },
+                    "events": {
+                      "component": {
+                        "onActionPerformed": {
+                          "config": {
+                            "script": "\tself.view.custom.show['nq'] = not self.view.custom.show['nq']"
+                          },
+                          "scope": "G",
+                          "type": "script"
+                        }
+                      }
+                    },
+                    "propConfig": {
+                      "props.text": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "'Named queries ' + toStr(coalesce({view.custom.detail.counts.nq}, 0))"
+                          }
+                        }
+                      },
+                      "props.style.classes": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if({view.custom.show.nq}, 'itm-chip itm-chip--on', 'itm-chip')"
+                          }
+                        }
+                      },
+                      "position.display": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "coalesce({view.custom.detail.counts.nq}, 0) > 0"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "type": "ia.input.button",
+                    "meta": {
+                      "name": "Chip_sql"
+                    },
+                    "position": {
+                      "shrink": 0
+                    },
+                    "props": {
+                      "text": "SQL",
+                      "style": {
+                        "classes": "itm-btn"
+                      }
+                    },
+                    "events": {
+                      "component": {
+                        "onActionPerformed": {
+                          "config": {
+                            "script": "\tself.view.custom.show['sql'] = not self.view.custom.show['sql']"
+                          },
+                          "scope": "G",
+                          "type": "script"
+                        }
+                      }
+                    },
+                    "propConfig": {
+                      "props.text": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "'SQL ' + toStr(coalesce({view.custom.detail.counts.sql}, 0))"
+                          }
+                        }
+                      },
+                      "props.style.classes": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if({view.custom.show.sql}, 'itm-chip itm-chip--on', 'itm-chip')"
+                          }
+                        }
+                      },
+                      "position.display": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "coalesce({view.custom.detail.counts.sql}, 0) > 0"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "type": "ia.input.button",
+                    "meta": {
+                      "name": "Chip_script"
+                    },
+                    "position": {
+                      "shrink": 0
+                    },
+                    "props": {
+                      "text": "Project scripts",
+                      "style": {
+                        "classes": "itm-btn"
+                      }
+                    },
+                    "events": {
+                      "component": {
+                        "onActionPerformed": {
+                          "config": {
+                            "script": "\tself.view.custom.show['script'] = not self.view.custom.show['script']"
+                          },
+                          "scope": "G",
+                          "type": "script"
+                        }
+                      }
+                    },
+                    "propConfig": {
+                      "props.text": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "'Project scripts ' + toStr(coalesce({view.custom.detail.counts.script}, 0))"
+                          }
+                        }
+                      },
+                      "props.style.classes": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if({view.custom.show.script}, 'itm-chip itm-chip--on', 'itm-chip')"
+                          }
+                        }
+                      },
+                      "position.display": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "coalesce({view.custom.detail.counts.script}, 0) > 0"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "type": "ia.input.button",
+                    "meta": {
+                      "name": "Chip_block"
+                    },
+                    "position": {
+                      "shrink": 0
+                    },
+                    "props": {
+                      "text": "Script blocks",
+                      "style": {
+                        "classes": "itm-btn"
+                      }
+                    },
+                    "events": {
+                      "component": {
+                        "onActionPerformed": {
+                          "config": {
+                            "script": "\tself.view.custom.show['block'] = not self.view.custom.show['block']"
+                          },
+                          "scope": "G",
+                          "type": "script"
+                        }
+                      }
+                    },
+                    "propConfig": {
+                      "props.text": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "'Script blocks ' + toStr(coalesce({view.custom.detail.counts.block}, 0))"
+                          }
+                        }
+                      },
+                      "props.style.classes": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if({view.custom.show.block}, 'itm-chip itm-chip--on', 'itm-chip')"
+                          }
+                        }
+                      },
+                      "position.display": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "coalesce({view.custom.detail.counts.block}, 0) > 0"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "type": "ia.input.button",
+                    "meta": {
+                      "name": "Chip_nav"
+                    },
+                    "position": {
+                      "shrink": 0
+                    },
+                    "props": {
+                      "text": "Navigation",
+                      "style": {
+                        "classes": "itm-btn"
+                      }
+                    },
+                    "events": {
+                      "component": {
+                        "onActionPerformed": {
+                          "config": {
+                            "script": "\tself.view.custom.show['nav'] = not self.view.custom.show['nav']"
+                          },
+                          "scope": "G",
+                          "type": "script"
+                        }
+                      }
+                    },
+                    "propConfig": {
+                      "props.text": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "'Navigation ' + toStr(coalesce({view.custom.detail.counts.nav}, 0))"
+                          }
+                        }
+                      },
+                      "props.style.classes": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if({view.custom.show.nav}, 'itm-chip itm-chip--on', 'itm-chip')"
+                          }
+                        }
+                      },
+                      "position.display": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "coalesce({view.custom.detail.counts.nav}, 0) > 0"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "type": "ia.input.button",
+                    "meta": {
+                      "name": "Chip_popup"
+                    },
+                    "position": {
+                      "shrink": 0
+                    },
+                    "props": {
+                      "text": "Popups & docks",
+                      "style": {
+                        "classes": "itm-btn"
+                      }
+                    },
+                    "events": {
+                      "component": {
+                        "onActionPerformed": {
+                          "config": {
+                            "script": "\tself.view.custom.show['popup'] = not self.view.custom.show['popup']"
+                          },
+                          "scope": "G",
+                          "type": "script"
+                        }
+                      }
+                    },
+                    "propConfig": {
+                      "props.text": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "'Popups & docks ' + toStr(coalesce({view.custom.detail.counts.popup}, 0))"
+                          }
+                        }
+                      },
+                      "props.style.classes": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if({view.custom.show.popup}, 'itm-chip itm-chip--on', 'itm-chip')"
+                          }
+                        }
+                      },
+                      "position.display": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "coalesce({view.custom.detail.counts.popup}, 0) > 0"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "type": "ia.input.button",
+                    "meta": {
+                      "name": "Chip_msg"
+                    },
+                    "position": {
+                      "shrink": 0
+                    },
+                    "props": {
+                      "text": "Messages",
+                      "style": {
+                        "classes": "itm-btn"
+                      }
+                    },
+                    "events": {
+                      "component": {
+                        "onActionPerformed": {
+                          "config": {
+                            "script": "\tself.view.custom.show['msg'] = not self.view.custom.show['msg']"
+                          },
+                          "scope": "G",
+                          "type": "script"
+                        }
+                      }
+                    },
+                    "propConfig": {
+                      "props.text": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "'Messages ' + toStr(coalesce({view.custom.detail.counts.msg}, 0))"
+                          }
+                        }
+                      },
+                      "props.style.classes": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if({view.custom.show.msg}, 'itm-chip itm-chip--on', 'itm-chip')"
+                          }
+                        }
+                      },
+                      "position.display": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "coalesce({view.custom.detail.counts.msg}, 0) > 0"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "type": "ia.input.button",
+                    "meta": {
+                      "name": "Chip_embed"
+                    },
+                    "position": {
+                      "shrink": 0
+                    },
+                    "props": {
+                      "text": "Embedded views",
+                      "style": {
+                        "classes": "itm-btn"
+                      }
+                    },
+                    "events": {
+                      "component": {
+                        "onActionPerformed": {
+                          "config": {
+                            "script": "\tself.view.custom.show['embed'] = not self.view.custom.show['embed']"
+                          },
+                          "scope": "G",
+                          "type": "script"
+                        }
+                      }
+                    },
+                    "propConfig": {
+                      "props.text": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "'Embedded views ' + toStr(coalesce({view.custom.detail.counts.embed}, 0))"
+                          }
+                        }
+                      },
+                      "props.style.classes": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if({view.custom.show.embed}, 'itm-chip itm-chip--on', 'itm-chip')"
+                          }
+                        }
+                      },
+                      "position.display": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "coalesce({view.custom.detail.counts.embed}, 0) > 0"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "type": "ia.input.button",
+                    "meta": {
+                      "name": "Chip_tag"
+                    },
+                    "position": {
+                      "shrink": 0
+                    },
+                    "props": {
+                      "text": "Tags",
+                      "style": {
+                        "classes": "itm-btn"
+                      }
+                    },
+                    "events": {
+                      "component": {
+                        "onActionPerformed": {
+                          "config": {
+                            "script": "\tself.view.custom.show['tag'] = not self.view.custom.show['tag']"
+                          },
+                          "scope": "G",
+                          "type": "script"
+                        }
+                      }
+                    },
+                    "propConfig": {
+                      "props.text": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "'Tags ' + toStr(coalesce({view.custom.detail.counts.tag}, 0))"
+                          }
+                        }
+                      },
+                      "props.style.classes": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if({view.custom.show.tag}, 'itm-chip itm-chip--on', 'itm-chip')"
+                          }
+                        }
+                      },
+                      "position.display": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "coalesce({view.custom.detail.counts.tag}, 0) > 0"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "type": "ia.input.button",
+                    "meta": {
+                      "name": "Chip_change"
+                    },
+                    "position": {
+                      "shrink": 0
+                    },
+                    "props": {
+                      "text": "Recent changes",
+                      "style": {
+                        "classes": "itm-btn"
+                      }
+                    },
+                    "events": {
+                      "component": {
+                        "onActionPerformed": {
+                          "config": {
+                            "script": "\tself.view.custom.show['change'] = not self.view.custom.show['change']"
+                          },
+                          "scope": "G",
+                          "type": "script"
+                        }
+                      }
+                    },
+                    "propConfig": {
+                      "props.text": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "'Recent changes ' + toStr(coalesce({view.custom.detail.counts.change}, 0))"
+                          }
+                        }
+                      },
+                      "props.style.classes": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "if({view.custom.show.change}, 'itm-chip itm-chip--on', 'itm-chip')"
+                          }
+                        }
+                      },
+                      "position.display": {
+                        "binding": {
+                          "type": "expr",
+                          "config": {
+                            "expression": "coalesce({view.custom.detail.counts.change}, 0) > 0"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "type": "ia.input.button",
+                    "meta": {
+                      "name": "ChipAll"
+                    },
+                    "position": {
+                      "shrink": 0
+                    },
+                    "props": {
+                      "text": "All",
+                      "style": {
+                        "classes": "itm-chip itm-chip--action"
+                      }
+                    },
+                    "events": {
+                      "component": {
+                        "onActionPerformed": {
+                          "config": {
+                            "script": "\tself.view.custom.show = dict((k, True) for k in ['issue', 'risk', 'api', 'nq', 'sql', 'script', 'block', 'nav', 'popup', 'msg', 'embed', 'tag', 'change'])"
+                          },
+                          "scope": "G",
+                          "type": "script"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "type": "ia.input.button",
+                    "meta": {
+                      "name": "ChipNone"
+                    },
+                    "position": {
+                      "shrink": 0
+                    },
+                    "props": {
+                      "text": "None",
+                      "style": {
+                        "classes": "itm-chip itm-chip--action"
+                      }
+                    },
+                    "events": {
+                      "component": {
+                        "onActionPerformed": {
+                          "config": {
+                            "script": "\tself.view.custom.show = dict((k, False) for k in ['issue', 'risk', 'api', 'nq', 'sql', 'script', 'block', 'nav', 'popup', 'msg', 'embed', 'tag', 'change'])"
+                          },
+                          "scope": "G",
+                          "type": "script"
+                        }
+                      }
+                    }
+                  }
+                ],
+                "propConfig": {
+                  "position.display": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "len({view.custom.key}) > 0 && {view.custom.key} != 'report:overview'"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "ia.container.split",
+                "meta": {
+                  "name": "FindingsSplit"
+                },
+                "position": {
+                  "grow": 1,
+                  "basis": "0px"
+                },
+                "props": {
+                  "orientation": "vertical",
+                  "split": {
+                    "position": "62%",
+                    "size": 8,
+                    "visible": true,
+                    "draggable": true
+                  },
+                  "style": {
+                    "classes": "itm-split"
+                  }
+                },
+                "propConfig": {
+                  "props.orientation": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "if({view.custom.detailSide} = 'beside', 'horizontal', 'vertical')"
+                      }
+                    }
+                  },
+                  "props.split.position": {
+                    "binding": {
+                      "type": "property",
+                      "config": {
+                        "path": "view.custom.detailPos",
+                        "bidirectional": true
+                      }
+                    }
+                  },
+                  "position.display": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "{view.custom.mode} = 'findings' && len({view.custom.key}) > 0 && {view.custom.key} != 'report:overview'"
+                      }
+                    }
+                  }
+                },
+                "children": [
+                  {
+                    "type": "ia.display.table",
+                    "meta": {
+                      "name": "Findings"
+                    },
+                    "position": {
+                      "position": "top"
+                    },
+                    "props": {
+                      "data": [],
+                      "columns": [
+                        {
+                          "field": "category",
+                          "visible": true,
+                          "editable": false,
+                          "sortable": false,
+                          "header": {
+                            "title": "Category"
+                          },
+                          "width": 118,
+                          "strictWidth": true
+                        },
+                        {
+                          "field": "view",
+                          "visible": true,
+                          "editable": false,
+                          "sortable": false,
+                          "header": {
+                            "title": "Where"
+                          },
+                          "width": 70
+                        },
+                        {
+                          "field": "comp",
+                          "visible": true,
+                          "editable": false,
+                          "sortable": false,
+                          "header": {
+                            "title": "Component"
+                          },
+                          "width": 70
+                        },
+                        {
+                          "field": "trigger",
+                          "visible": true,
+                          "editable": false,
+                          "sortable": false,
+                          "header": {
+                            "title": "Trigger"
+                          },
+                          "width": 70
+                        },
+                        {
+                          "field": "target",
+                          "visible": true,
+                          "editable": false,
+                          "sortable": false,
+                          "header": {
+                            "title": "Target"
+                          },
+                          "width": 80
+                        },
+                        {
+                          "field": "detail",
+                          "visible": true,
+                          "editable": false,
+                          "sortable": false,
+                          "header": {
+                            "title": "Detail"
+                          },
+                          "width": 100
+                        },
+                        {
+                          "field": "bi",
+                          "visible": false,
+                          "editable": false,
+                          "sortable": false,
+                          "header": {
+                            "title": "bi"
+                          },
+                          "width": 10
+                        },
+                        {
+                          "field": "source",
+                          "visible": false,
+                          "editable": false,
+                          "sortable": false,
+                          "header": {
+                            "title": "source"
+                          },
+                          "width": 10
+                        },
+                        {
+                          "field": "jump",
+                          "visible": false,
+                          "editable": false,
+                          "sortable": false,
+                          "header": {
+                            "title": "jump"
+                          },
+                          "width": 10
+                        }
+                      ],
+                      "pager": {
+                        "top": false,
+                        "bottom": false
+                      },
+                      "rows": {
+                        "height": 28
+                      },
+                      "virtualized": true,
+                      "emptyMessage": {
+                        "noData": {
+                          "text": "Nothing here - pick a page, or turn a category on"
+                        }
+                      },
+                      "selection": {
+                        "mode": "single",
+                        "enableRowSelection": true
+                      },
+                      "style": {
+                        "classes": "itm-table"
+                      }
+                    },
+                    "propConfig": {
+                      "props.data": {
+                        "binding": {
+                          "type": "property",
+                          "config": {
+                            "path": "view.custom.detail.rows"
+                          }
+                        }
+                      }
+                    },
+                    "events": {
+                      "component": {
+                        "onRowClick": {
+                          "config": {
+                            "script": "\tself.view.custom.selected = self.props.data[event.row]"
+                          },
+                          "scope": "G",
+                          "type": "script"
+                        },
+                        "onRowDoubleClick": {
+                          "config": {
+                            "script": "\tjump = self.props.data[event.row].get('jump')\n\tif jump:\n\t\tself.view.rootContainer.go(jump)"
+                          },
+                          "scope": "G",
+                          "type": "script"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "type": "ia.container.flex",
+                    "meta": {
+                      "name": "DetailPane"
+                    },
+                    "position": {
+                      "position": "bottom"
+                    },
+                    "props": {
+                      "direction": "column",
+                      "style": {
+                        "classes": "itm-pane"
+                      }
+                    },
+                    "children": [
+                      {
+                        "type": "ia.container.flex",
+                        "meta": {
+                          "name": "PaneBar"
+                        },
+                        "position": {
+                          "shrink": 0,
+                          "basis": "36px"
+                        },
+                        "props": {
+                          "direction": "row",
+                          "alignItems": "center",
+                          "style": {
+                            "classes": "itm-row"
+                          }
+                        },
+                        "children": [
+                          {
+                            "type": "ia.display.label",
+                            "meta": {
+                              "name": "Selected"
+                            },
+                            "position": {
+                              "grow": 1,
+                              "shrink": 1,
+                              "basis": "0px"
+                            },
+                            "props": {
+                              "text": "",
+                              "style": {
+                                "classes": "itm-muted itm-selected"
+                              }
+                            },
+                            "propConfig": {
+                              "props.text": {
+                                "binding": {
+                                  "type": "expr",
+                                  "config": {
+                                    "expression": "if(len(coalesce({view.custom.selected.target}, {view.custom.selected.comp}, '')) = 0, 'Select a row; double-click one to follow it', coalesce({view.custom.selected.comp}, '') + '  ' + coalesce({view.custom.selected.trigger}, '') + if(len(coalesce({view.custom.selected.target}, '')) > 0, '  >  ' + {view.custom.selected.target}, ''))"
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "type": "ia.input.button",
+                            "meta": {
+                              "name": "OpenTarget",
+                              "tooltip": {
+                                "enabled": true,
+                                "text": "Go to what this finding points at (or double-click the row)"
+                              }
+                            },
+                            "position": {
+                              "shrink": 0
+                            },
+                            "props": {
+                              "text": "Open target",
+                              "style": {
+                                "classes": "itm-btn"
+                              }
+                            },
+                            "events": {
+                              "component": {
+                                "onActionPerformed": {
+                                  "config": {
+                                    "script": "\tjump = self.view.custom.selected.get('jump')\n\tif jump:\n\t\tself.view.rootContainer.go(jump)"
+                                  },
+                                  "scope": "G",
+                                  "type": "script"
+                                }
+                              }
+                            },
+                            "propConfig": {
+                              "props.text": {
+                                "binding": {
+                                  "type": "expr",
+                                  "config": {
+                                    "expression": "case(left(coalesce({view.custom.selected.jump}, ''), 5), 'view:', 'Open view', 'route', 'Open page', 'use:v', 'Where used', 'use:n', 'Where used', 'use:f', 'Where used', 'use:m', 'Where used', 'use:t', 'Where used', 'Open target')"
+                                  }
+                                }
+                              },
+                              "props.enabled": {
+                                "binding": {
+                                  "type": "expr",
+                                  "config": {
+                                    "expression": "len(coalesce({view.custom.selected.jump}, '')) > 0"
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "type": "ia.input.button",
+                            "meta": {
+                              "name": "DetailSide",
+                              "tooltip": {
+                                "enabled": true,
+                                "text": "Put the script pane beside the table or below it"
+                              }
+                            },
+                            "position": {
+                              "shrink": 0
+                            },
+                            "props": {
+                              "text": "Details beside",
+                              "style": {
+                                "classes": "itm-btn"
+                              }
+                            },
+                            "events": {
+                              "component": {
+                                "onActionPerformed": {
+                                  "config": {
+                                    "script": "\tself.view.custom.detailSide = 'beside' if self.view.custom.detailSide == 'below' else 'below'\n\tself.view.custom.detailPos = '55%' if self.view.custom.detailSide == 'beside' else '62%'"
+                                  },
+                                  "scope": "G",
+                                  "type": "script"
+                                }
+                              }
+                            },
+                            "propConfig": {
+                              "props.text": {
+                                "binding": {
+                                  "type": "expr",
+                                  "config": {
+                                    "expression": "if({view.custom.detailSide} = 'below', 'Details beside', 'Details below')"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "type": "ia.display.markdown",
+                        "meta": {
+                          "name": "Script"
+                        },
+                        "position": {
+                          "grow": 1,
+                          "basis": "0px"
+                        },
+                        "props": {
+                          "source": "",
+                          "markdown": {
+                            "escapeHtml": true
+                          },
+                          "style": {
+                            "classes": "itm-code"
+                          }
+                        },
+                        "propConfig": {
+                          "props.source": {
+                            "binding": {
+                              "type": "property",
+                              "config": {
+                                "path": "view.custom.script"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "ia.display.markdown",
+                "meta": {
+                  "name": "Text"
+                },
+                "position": {
+                  "grow": 1,
+                  "basis": "0px"
+                },
+                "props": {
+                  "source": "",
+                  "markdown": {
+                    "escapeHtml": true
+                  },
+                  "style": {
+                    "classes": "itm-md"
+                  }
+                },
+                "propConfig": {
+                  "props.source": {
+                    "binding": {
+                      "type": "property",
+                      "config": {
+                        "path": "view.custom.text"
+                      }
+                    }
+                  },
+                  "position.display": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "{view.custom.project} != '*' && ({view.custom.mode} = 'markdown' || len({view.custom.key}) = 0 || {view.custom.key} = 'report:overview')"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "ia.container.flex",
+                "meta": {
+                  "name": "TriagePane"
+                },
+                "position": {
+                  "grow": 1,
+                  "basis": "0px"
+                },
+                "props": {
+                  "direction": "column",
+                  "style": {
+                    "classes": "itm-right-inner"
+                  }
+                },
+                "children": [
+                  {
+                    "type": "ia.container.flex",
+                    "meta": {
+                      "name": "TriageHead"
+                    },
+                    "position": {
+                      "shrink": 0,
+                      "basis": "40px"
+                    },
+                    "props": {
+                      "direction": "row",
+                      "alignItems": "center",
+                      "style": {
+                        "classes": "itm-row"
+                      }
+                    },
+                    "children": [
+                      {
+                        "type": "ia.display.label",
+                        "meta": {
+                          "name": "TriageTitle"
+                        },
+                        "position": {
+                          "grow": 1,
+                          "shrink": 1,
+                          "basis": "0px"
+                        },
+                        "props": {
+                          "text": "All projects on this gateway",
+                          "style": {
+                            "classes": "itm-page-title"
+                          }
+                        }
+                      },
+                      {
+                        "type": "ia.display.label",
+                        "meta": {
+                          "name": "TriageNote"
+                        },
+                        "position": {
+                          "shrink": 0
+                        },
+                        "props": {
+                          "text": "Double-click a project to inspect it",
+                          "style": {
+                            "classes": "itm-muted"
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "type": "ia.display.table",
+                    "meta": {
+                      "name": "Triage"
+                    },
+                    "position": {
+                      "grow": 1,
+                      "basis": "0px"
+                    },
+                    "props": {
+                      "data": [],
+                      "columns": [
+                        {
+                          "field": "project",
+                          "visible": true,
+                          "editable": false,
+                          "sortable": false,
+                          "header": {
+                            "title": "Project"
+                          },
+                          "width": 90
+                        },
+                        {
+                          "field": "title",
+                          "visible": true,
+                          "editable": false,
+                          "sortable": false,
+                          "header": {
+                            "title": "Title"
+                          },
+                          "width": 110
+                        },
+                        {
+                          "field": "enabled",
+                          "visible": true,
+                          "editable": false,
+                          "sortable": false,
+                          "header": {
+                            "title": "Enabled"
+                          },
+                          "width": 84,
+                          "strictWidth": true
+                        },
+                        {
+                          "field": "pages",
+                          "visible": true,
+                          "editable": false,
+                          "sortable": false,
+                          "header": {
+                            "title": "Pages"
+                          },
+                          "width": 74,
+                          "strictWidth": true
+                        },
+                        {
+                          "field": "views",
+                          "visible": true,
+                          "editable": false,
+                          "sortable": false,
+                          "header": {
+                            "title": "Views"
+                          },
+                          "width": 74,
+                          "strictWidth": true
+                        },
+                        {
+                          "field": "issues",
+                          "visible": true,
+                          "editable": false,
+                          "sortable": false,
+                          "header": {
+                            "title": "Broken refs"
+                          },
+                          "width": 112,
+                          "strictWidth": true
+                        },
+                        {
+                          "field": "risks",
+                          "visible": true,
+                          "editable": false,
+                          "sortable": false,
+                          "header": {
+                            "title": "Risks"
+                          },
+                          "width": 74,
+                          "strictWidth": true
+                        },
+                        {
+                          "field": "background",
+                          "visible": true,
+                          "editable": false,
+                          "sortable": false,
+                          "header": {
+                            "title": "Gateway scripts"
+                          },
+                          "width": 140,
+                          "strictWidth": true
+                        },
+                        {
+                          "field": "changed",
+                          "visible": true,
+                          "editable": false,
+                          "sortable": false,
+                          "header": {
+                            "title": "Last change"
+                          },
+                          "width": 130
+                        }
+                      ],
+                      "pager": {
+                        "top": false,
+                        "bottom": false
+                      },
+                      "rows": {
+                        "height": 28
+                      },
+                      "virtualized": true,
+                      "emptyMessage": {
+                        "noData": {
+                          "text": "Scanning every project - a few seconds each the first time"
+                        }
+                      },
+                      "selection": {
+                        "mode": "single",
+                        "enableRowSelection": true
+                      },
+                      "style": {
+                        "classes": "itm-table"
+                      }
+                    },
+                    "propConfig": {
+                      "props.data": {
+                        "binding": {
+                          "type": "property",
+                          "config": {
+                            "path": "view.custom.triage"
+                          }
+                        }
+                      }
+                    },
+                    "events": {
+                      "component": {
+                        "onRowDoubleClick": {
+                          "config": {
+                            "script": "\tself.view.custom.project = self.props.data[event.row]['project']"
+                          },
+                          "scope": "G",
+                          "type": "script"
+                        }
+                      }
+                    }
+                  }
+                ],
+                "propConfig": {
+                  "position.display": {
+                    "binding": {
+                      "type": "expr",
+                      "config": {
+                        "expression": "{view.custom.project} = '*'"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "scripts": {
+      "customMethods": [
+        {
+          "name": "go",
+          "params": [
+            "key"
+          ],
+          "script": "\t# Every move to another page or check goes through here, so Back can retrace it.\n\tview = self.view\n\tif key and key != view.custom.key:\n\t\tview.custom.history = (list(view.custom.history) + [view.custom.key])[-50:] if view.custom.key else list(view.custom.history)\n\t\tview.custom.key = key\n\t\tview.custom.selected = {}"
+        }
+      ],
+      "extensionFunctions": null,
+      "messageHandlers": []
+    }
+  }
+}

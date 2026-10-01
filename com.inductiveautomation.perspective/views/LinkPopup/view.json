@@ -1,0 +1,74 @@
+{
+  "custom": {},
+  "params": {
+    "url": ""
+  },
+  "propConfig": {
+    "params.url": {
+      "paramDirection": "input",
+      "persistent": true
+    }
+  },
+  "props": {
+    "defaultSize": {
+      "height": 150,
+      "width": 620
+    }
+  },
+  "root": {
+    "type": "ia.container.flex",
+    "meta": {
+      "name": "root"
+    },
+    "position": {},
+    "props": {
+      "direction": "column",
+      "style": {
+        "classes": "itm-popup"
+      }
+    },
+    "children": [
+      {
+        "type": "ia.display.label",
+        "meta": {
+          "name": "Hint"
+        },
+        "position": {
+          "shrink": 0
+        },
+        "props": {
+          "text": "Copy this link (Ctrl+C). It opens the Inspector on the same project and page.",
+          "style": {
+            "classes": "itm-muted"
+          }
+        }
+      },
+      {
+        "type": "ia.input.text-area",
+        "meta": {
+          "name": "Url"
+        },
+        "position": {
+          "grow": 1,
+          "basis": "64px"
+        },
+        "props": {
+          "text": "",
+          "style": {
+            "classes": "itm-input itm-url"
+          }
+        },
+        "propConfig": {
+          "props.text": {
+            "binding": {
+              "type": "property",
+              "config": {
+                "path": "view.params.url"
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+}

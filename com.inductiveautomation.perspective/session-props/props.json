@@ -1,0 +1,10 @@
+{
+  "custom": {},
+  "props": {
+    "theme": "dark",
+    "locale": "en-AU",
+    "appBar": {
+      "togglePosition": "hidden"
+    }
+  }
+}

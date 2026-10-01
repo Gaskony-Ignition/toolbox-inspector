@@ -1,0 +1,155 @@
+/* Toolbox Inspector. Every colour comes from the session theme, so any stock
+   or house theme repaints the page. The token names follow Access Manager,
+   where their contrast was measured across the six stock themes. */
+
+/* The theme's own color-scheme wins where it declares one; :where() has no
+   specificity, so this is only the fallback for the stock themes, which
+   declare none. Without any declaration Chrome's auto dark mode repaints. */
+:where(:root) { color-scheme: light dark; }
+
+:root {
+	--itm-page:    var(--containerRoot);
+	--itm-panel:   var(--container);
+	--itm-raised:  var(--containerNested);
+	--itm-line:    var(--border);
+	--itm-ink:     var(--label);
+	/* Built from --label and --icon, never mixed toward a background, so it
+	   holds 4.5:1 on every surface in every stock theme. */
+	--itm-muted:   color-mix(in srgb, var(--label) 55%, var(--icon) 45%);
+	--itm-accent:  var(--callToAction);
+	--itm-accent-soft: var(--callToActionHighlight);
+	--itm-alert-text: color-mix(in srgb, var(--label) 60%, var(--error) 40%);
+	--itm-mono: "JetBrains Mono", "IBM Plex Mono", "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
+	--itm-control: 30px;
+}
+
+.app-bar { display: none !important; }
+
+.psc-itm-page {
+	background: var(--itm-page);
+	color: var(--itm-ink);
+	font-size: 14px;
+	height: 100%;
+	min-height: 0;
+}
+
+:focus-visible, .ia_dropdown.ia_dropdown--focused {
+	outline: 2px solid var(--a11y-focus-ring, var(--neutral-100));
+	outline-offset: 1px;
+}
+
+.psc-itm-header {
+	background: var(--itm-panel);
+	border-bottom: 1px solid var(--itm-line);
+	padding: 0 12px;
+	gap: 10px;
+}
+.psc-itm-title { font-size: 17px; font-weight: 600; margin-right: 4px; line-height: 1.4; white-space: nowrap; }
+.psc-itm-page-title { font-size: 16px; font-weight: 600; line-height: 1.4; min-width: 0; }
+.psc-itm-page-title span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.psc-itm-muted { color: var(--itm-muted); font-size: 13px; line-height: 1.4; white-space: nowrap; }
+.psc-itm-theme { height: 34px; }
+
+.psc-itm-split { min-height: 0; min-width: 0; background: var(--itm-page); }
+.psc-itm-left { background: var(--itm-panel); min-height: 0; min-width: 0; height: 100%; overflow: hidden; padding-top: 8px; }
+.psc-itm-right { min-width: 0; min-height: 0; height: 100%; padding: 6px 12px 12px; gap: 6px; }
+.psc-itm-row { gap: 10px; min-width: 0; }
+
+.psc-itm-btn, .psc-itm-input, .psc-itm-seg {
+	height: var(--itm-control) !important;
+	min-height: var(--itm-control);
+	font-size: 13px;
+}
+.psc-itm-btn {
+	background: var(--itm-raised);
+	color: var(--itm-ink);
+	border: 1px solid var(--itm-line);
+	border-radius: 4px;
+	padding: 0 12px;
+	white-space: nowrap;
+}
+.psc-itm-btn:hover { border-color: var(--itm-accent); }
+.psc-itm-btn.ia_button--disabled, .psc-itm-btn[disabled] { opacity: 0.55; }
+.psc-itm-input, .psc-itm-input input { background: var(--itm-raised); color: var(--itm-ink); border-color: var(--itm-line); }
+.psc-itm-input .ia_dropdown__placeholder, .psc-itm-input input::placeholder { color: var(--itm-muted); opacity: 1; }
+.psc-itm-search { min-width: 120px; }
+.psc-itm-toggle { color: var(--itm-ink); font-size: 13px; }
+.psc-itm-find { margin: 0 8px 6px; }
+
+.psc-itm-segs { border: 1px solid var(--itm-line); border-radius: 4px; overflow: hidden; }
+.psc-itm-seg { background: var(--itm-raised); color: var(--itm-muted); border: none; border-radius: 0; padding: 0 12px; }
+.psc-itm-seg--on { background: var(--itm-accent-soft); color: var(--itm-ink); box-shadow: inset 0 -2px 0 var(--itm-accent); }
+
+.psc-itm-chips { gap: 6px; }
+.psc-itm-chip {
+	height: 28px !important;
+	min-height: 28px;
+	font-size: 13px;
+	background: transparent;
+	color: var(--itm-muted);
+	border: 1px solid var(--itm-line);
+	border-radius: 14px;
+	padding: 0 12px;
+	white-space: nowrap;
+}
+.psc-itm-chip--on { background: var(--itm-accent-soft); color: var(--itm-ink); border-color: var(--itm-accent); }
+.psc-itm-chip--alert { color: var(--itm-alert-text); border-color: var(--error); }
+.psc-itm-chip--alert.psc-itm-chip--on { color: var(--itm-ink); }
+.psc-itm-chip--action { border-style: dashed; }
+
+/* The tree component scrolls, not its inner list, so the focusable element is
+   the one that scrolls (axe: scrollable-region-focusable). */
+.psc-itm-tree { background: transparent; color: var(--itm-ink); font-size: 13px; padding: 0 4px 8px; overflow: auto; }
+.psc-itm-tree > .tree { overflow: visible !important; height: auto !important; }
+
+.psc-itm-table, .psc-itm-table .ia_table, .psc-itm-table .ia_tableComponent,
+.psc-itm-table .ia_table__body, .psc-itm-table .ia_container--secondary { background: var(--itm-panel) !important; color: var(--itm-ink); }
+.psc-itm-table { border: 1px solid var(--itm-line); border-radius: 4px; font-size: 13px; min-height: 0; height: 100%; }
+.psc-itm-table .ia_table__head__header { background: var(--itm-raised); color: var(--itm-muted); padding: 0 8px; }
+.psc-itm-table .ia_table__cell { padding: 0 8px; }
+.psc-itm-table .ia_table__row { color: var(--itm-ink) !important; }
+.psc-itm-table .ia_table__body__row--even { background: var(--itm-raised); }
+.psc-itm-table .ia_table__body__row[class*="--selected"] { background: var(--itm-accent-soft) !important; }
+.psc-itm-table .ia_table__body__row[class*="--hovered"] { background: var(--itm-raised) !important; }
+.psc-itm-table .empty-message { color: var(--itm-muted); }
+/* One line per row: a wrapped cell is sliced by the fixed row height, so
+   long values elide and the full script sits in the details pane. */
+.psc-itm-table .ia_table__cell .content, .psc-itm-table .ia_table__cell .content > div {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+/* The cell content is a flex box, where text-overflow does nothing. */
+.psc-itm-table .ia_table__cell .content { display: block; min-width: 0; }
+
+.psc-itm-code, .psc-itm-md {
+	background: var(--itm-panel);
+	border: 1px solid var(--itm-line);
+	border-radius: 4px;
+	overflow: auto;
+	height: 100%;
+	min-height: 0;
+}
+.psc-itm-code { padding: 10px 12px; }
+.psc-itm-code > :first-child { margin-top: 0; }
+.psc-itm-code pre { margin: 0; line-height: 1.5; }
+.psc-itm-code pre, .psc-itm-code code { font-family: var(--itm-mono); font-size: 12.5px; color: var(--itm-ink); background: transparent; }
+.psc-itm-md { padding: 4px 16px 12px; font-size: 14px; line-height: 1.5; color: var(--itm-ink); }
+.psc-itm-md code { font-family: var(--itm-mono); font-size: 12.5px; background: var(--itm-raised); padding: 0 3px; border-radius: 3px; }
+.psc-itm-md pre code { display: block; padding: 8px; }
+.psc-itm-md table { border-collapse: collapse; font-size: 13px; }
+.psc-itm-md table, .psc-itm-md thead, .psc-itm-md tbody, .psc-itm-md tr { background: transparent !important; }
+.psc-itm-md th, .psc-itm-md td { border: 1px solid var(--itm-line); padding: 3px 8px; text-align: left; vertical-align: top; color: var(--itm-ink) !important; background: transparent !important; }
+.psc-itm-md th { background: var(--itm-raised) !important; }
+.psc-itm-md a { color: var(--itm-accent); }
+.ReactVirtualized__Grid:focus-visible {
+	outline: 2px solid var(--a11y-focus-ring, var(--neutral-100)) !important;
+	outline-offset: -2px;
+}
+
+.psc-itm-pane { gap: 4px; min-width: 0; min-height: 0; height: 100%; }
+.psc-itm-selected { overflow: hidden; text-overflow: ellipsis; }
+.psc-itm-selected span { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.psc-itm-right-inner { min-height: 0; gap: 6px; }
+.psc-itm-popup { background: var(--itm-panel); color: var(--itm-ink); padding: 12px 16px; gap: 10px; height: 100%; }
+.psc-itm-url { font-family: var(--itm-mono); font-size: 12.5px; word-break: break-all; resize: none; }
