@@ -98,7 +98,7 @@ if [[ " $* " != *" --skip-a11y-check "* ]]; then
 		    --exclude='README.md' --exclude='tools' \
 		    --exclude='docs' --exclude='a11y.json' --exclude='.github' --exclude='dist' --exclude='__pycache__' . \
 			| docker exec -i "$CONTAINER" tar -xf - -C "$REMOTE_DIR"
-		node /Home-Claude/ignition-claude-toolkit/plugins/ignition/skills/scan/tool/scan.js --gateway module-testing >/dev/null
+		node "${IGNITION_TOOLKIT:?set IGNITION_TOOLKIT to the ignition-claude-toolkit checkout}"/plugins/ignition/skills/scan/tool/scan.js --gateway module-testing >/dev/null
 		sleep 3
 		"$_a11y_gate" "$HERE" || { echo "a11y gate failed: fix the findings, or record a reasoned exception in a11y.json (--skip-a11y-check to bypass)" >&2; exit 1; }
 	else
