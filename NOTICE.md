@@ -1,9 +1,8 @@
 # Notice
 
-This repository is personal work by an employee of Inductive Automation. It is
-not an Inductive Automation product. Inductive Automation does not support,
-endorse or maintain it, and nothing here is covered by an Inductive Automation
-support contract, forum answer or account manager.
+This repository is not an Inductive Automation product. Inductive Automation
+does not support, endorse or maintain it, and nothing here is covered by an
+Inductive Automation support contract, forum answer or account manager.
 
 What it is for: showing what Ignition can do, and giving you a starting point to
 take ideas or pieces from.

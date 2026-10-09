@@ -2,7 +2,7 @@
 
 A Perspective tool that explains any project on its gateway: what each page does, what breaks, what runs with no page open, and what is risky.
 
-> **Not an Inductive Automation product, and not supported by Inductive Automation.** Personal work, largely built with AI tools and tested for one purpose on one gateway. Take the ideas; fork and review it before it goes near production. [NOTICE.md](NOTICE.md) says more.
+> **Not an Inductive Automation product, and not supported by Inductive Automation.** Independent work, largely built with AI tools and tested for one purpose on one gateway. Take the ideas; fork and review it before it goes near production. [NOTICE.md](NOTICE.md) says more.
 
 ## Why this exists
 
