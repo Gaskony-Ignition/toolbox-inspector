@@ -2,6 +2,8 @@
 
 A Perspective tool that explains any project on its gateway: what each page does, what breaks, what runs with no page open, and what is risky.
 
+> **Not an Inductive Automation product, and not supported by Inductive Automation.** Personal work, largely built with AI tools and tested for one purpose on one gateway. Take the ideas; fork and review it before it goes near production. [NOTICE.md](NOTICE.md) says more.
+
 ## Why this exists
 
 Opening an unfamiliar Ignition project means clicking through views in the Designer to find out which button calls which API, which named queries a page needs, and which gateway scripts run on a timer behind everything. A large project has hundreds of views and thousands of scripts, bindings and calls, and a support engineer seeing it for the first time needs the answers in minutes, not days.
