@@ -8,7 +8,7 @@ What it is for: showing what Ignition can do, and giving you a starting point to
 take ideas or pieces from.
 
 What it is not: a tested product. It was built for one purpose and tested for
-that purpose, on one gateway version, usually on one machine. AI tools did a
+that purpose, on a limited subset of gateway versions and platforms. AI tools did a
 large share of the building. Anything you take toward production should be
 forked, read line by line and tested in your own environment first.
 
