@@ -12,6 +12,9 @@ that purpose, on a limited subset of gateway versions and platforms. AI tools di
 large share of the building. Anything you take toward production should be
 forked, read line by line and tested in your own environment first.
 
+Feedback is welcome through the repository's Issues tab. Where it is possible,
+improvements will be made, but no support, response or fix is guaranteed.
+
 Nothing here carries a warranty of correctness, completeness, security or
 fitness for any purpose. Where a licence is present its warranty disclaimer
 applies in full; where none is, the repository is shared for reading, not
